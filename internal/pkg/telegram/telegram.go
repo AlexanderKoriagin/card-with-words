@@ -1,19 +1,28 @@
 package telegram
 
 import (
-	"cardWithWords/internal/services"
 	"sync"
+
+	"cardWithWords/internal/pkg/groq"
+	"cardWithWords/internal/services"
 )
 
 type Telegram struct {
 	Features Features
 }
 
-func Init(storage services.Data, wg *sync.WaitGroup, cDone chan struct{}, cErr chan error) *Telegram {
+func Init(
+	storage services.Data,
+	groqWords groq.Words,
+	wg *sync.WaitGroup,
+	cDone chan struct{},
+	cErr chan error,
+) *Telegram {
 	return &Telegram{
 		Features: &Bot{
-			Words: storage,
-			Wg:    wg,
+			WordsLocal: storage,
+			WordsGroq:  groqWords,
+			Wg:         wg,
 			Channels: Channels{
 				Done:   cDone,
 				Errors: cErr,

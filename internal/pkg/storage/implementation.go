@@ -1,27 +1,22 @@
 package storage
 
 import (
+	"strings"
+
+	"cardWithWords/internal/pkg/base"
 	"cardWithWords/internal/pkg/data/words/english"
 	"cardWithWords/internal/pkg/data/words/russian"
 	"cardWithWords/internal/pkg/random"
-	"strings"
-)
-
-type Language int
-
-const (
-	Russian Language = iota
-	English
 )
 
 // Features interface to get "card" with qty words separated by \n
 type Features interface {
-	Card(lang Language, qty int) string
+	Card(lang base.Language, qty int) string
 }
 
 type words struct{}
 
-func (w *words) Card(lang Language, qty int) string {
+func (w *words) Card(lang base.Language, qty int) string {
 	var (
 		str    string
 		source []string
@@ -32,7 +27,7 @@ func (w *words) Card(lang Language, qty int) string {
 	}
 
 	switch lang {
-	case English:
+	case base.English:
 		source = english.English
 	default:
 		source = russian.Russian

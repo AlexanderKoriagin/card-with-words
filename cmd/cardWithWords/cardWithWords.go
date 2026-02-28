@@ -1,8 +1,6 @@
 package main
 
 import (
-	"cardWithWords/internal/pkg/storage"
-	"cardWithWords/internal/pkg/telegram"
 	"fmt"
 	"log"
 	"os"
@@ -10,11 +8,16 @@ import (
 	"sync"
 	"syscall"
 
+	"cardWithWords/internal/pkg/groq"
+	"cardWithWords/internal/pkg/storage"
+	"cardWithWords/internal/pkg/telegram"
+
 	"github.com/jessevdk/go-flags"
 )
 
 type Opts struct {
-	Token string `long:"token" description:"telegram api token" required:"true"`
+	TokenTelegram string `long:"tokenTelegram" description:"telegram api token" required:"true"`
+	TokenGroq     string `long:"tokenGroq" description:"groq api token" required:"true"`
 }
 
 var (
@@ -42,8 +45,20 @@ func main() {
 	}
 
 	wg.Add(2)
-	words := storage.Init()
-	tb := telegram.Init(words, wg, chanDone, chanError)
+
+	groqWords, err := groq.New(opts.TokenGroq)
+	if err != nil {
+		log.Fatalf("couldn't initialize groq client: %v\n", err)
+	}
+
+	localWords := storage.Init()
+	tb := telegram.Init(
+		localWords,
+		groqWords,
+		wg,
+		chanDone,
+		chanError,
+	)
 
 	go dispatcher()
 
@@ -60,7 +75,8 @@ func main() {
 		}
 	}(wg, chanDone, chanError)
 
-	if err := tb.PlayCards(opts.Token); err != nil {
+	err = tb.PlayCards(opts.TokenTelegram)
+	if err != nil {
 		log.Fatalf("couldn't initialize telegram bot api: %v\n", err)
 	}
 

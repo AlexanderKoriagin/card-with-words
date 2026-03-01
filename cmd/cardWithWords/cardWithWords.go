@@ -16,8 +16,8 @@ import (
 )
 
 type Opts struct {
-	TokenTelegram string `long:"tokenTelegram" description:"telegram api token" required:"true"`
-	TokenGroq     string `long:"tokenGroq" description:"groq api token" required:"true"`
+	TokenTelegram string `long:"token-telegram" description:"telegram api token" required:"true"`
+	TokenGroq     string `long:"token-groq" description:"groq api token" required:"true"`
 }
 
 var (

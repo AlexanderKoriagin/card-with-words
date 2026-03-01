@@ -14,9 +14,12 @@ import (
 const (
 	buttonRus         = "получить карту"
 	buttonEng         = "get a card"
-	buttonGroqChildRu = "GroqChildRu"
-	buttonGroqTeenRu  = "GroqTeenRu"
-	buttonGroqAdultRu = "GroqAdultRu"
+	buttonGroqChildRu = "для детей"
+	buttonGroqTeenRu  = "для подростков"
+	buttonGroqAdultRu = "для взрослых"
+	buttonGroqChildEn = "for kids"
+	buttonGroqTeenEn  = "for teens"
+	buttonGroqAdultEn = "for adults"
 
 	msgDefault = "нажми на кнопку / press the button"
 )
@@ -67,9 +70,16 @@ func (b *Bot) Worker() {
 		tba.NewKeyboardButtonRow(
 			tba.NewKeyboardButton(buttonRus),
 			tba.NewKeyboardButton(buttonEng),
+		),
+		tba.NewKeyboardButtonRow(
 			tba.NewKeyboardButton(buttonGroqChildRu),
 			tba.NewKeyboardButton(buttonGroqTeenRu),
 			tba.NewKeyboardButton(buttonGroqAdultRu),
+		),
+		tba.NewKeyboardButtonRow(
+			tba.NewKeyboardButton(buttonGroqChildEn),
+			tba.NewKeyboardButton(buttonGroqTeenEn),
+			tba.NewKeyboardButton(buttonGroqAdultEn),
 		),
 	)
 
@@ -92,21 +102,42 @@ func (b *Bot) Worker() {
 				case buttonGroqChildRu:
 					groqCard, err := b.WordsGroq.Card8Words(base.Russian, base.Child)
 					if err != nil {
-						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card from Groq: %v\n", err)
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card ru-child from Groq: %v\n", err)
 						card = msgDefault
 					}
 					card = *groqCard
 				case buttonGroqTeenRu:
 					groqCard, err := b.WordsGroq.Card8Words(base.Russian, base.Teen)
 					if err != nil {
-						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card from Groq: %v\n", err)
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card ru-teen from Groq: %v\n", err)
 						card = msgDefault
 					}
 					card = *groqCard
 				case buttonGroqAdultRu:
 					groqCard, err := b.WordsGroq.Card8Words(base.Russian, base.Adult)
 					if err != nil {
-						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card from Groq: %v\n", err)
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card ru-adult from Groq: %v\n", err)
+						card = msgDefault
+					}
+					card = *groqCard
+				case buttonGroqChildEn:
+					groqCard, err := b.WordsGroq.Card8Words(base.English, base.Child)
+					if err != nil {
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card en-child from Groq: %v\n", err)
+						card = msgDefault
+					}
+					card = *groqCard
+				case buttonGroqTeenEn:
+					groqCard, err := b.WordsGroq.Card8Words(base.English, base.Teen)
+					if err != nil {
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card en-teen from Groq: %v\n", err)
+						card = msgDefault
+					}
+					card = *groqCard
+				case buttonGroqAdultEn:
+					groqCard, err := b.WordsGroq.Card8Words(base.English, base.Adult)
+					if err != nil {
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card en-adult from Groq: %v\n", err)
 						card = msgDefault
 					}
 					card = *groqCard
@@ -117,12 +148,6 @@ func (b *Bot) Worker() {
 
 			msg := tba.NewMessage(u.Message.Chat.ID, card)
 			msg.ReplyMarkup = keyboard
-			//msg.ReplyMarkup = tba.NewReplyKeyboard(
-			//	[]tba.KeyboardButton{
-			//		{Text: buttonRus},
-			//		{Text: buttonEng},
-			//	},
-			//)
 
 			_, err := b.Api.Send(msg)
 			if err != nil {

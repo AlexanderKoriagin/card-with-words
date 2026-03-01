@@ -21,5 +21,5 @@ docker build -t cardWithWords:latest -f ./Dockerfile .
 
 ```shell script
 # Run docker container
-docker run -d --name cardWithWords --restart always cardwithwords:latest /cardWithWords --token YOUR_TOKEN
+docker run -d --name cardWithWords --restart always cardwithwords:latest /cardWithWords --token-telegram YOUR_TOKEN --token-groq YOUR_TOKEN
 ```

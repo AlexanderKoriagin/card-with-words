@@ -2,7 +2,7 @@ package base
 
 const (
 	DefaultQty       = 8
-	DefaultCacheSize = 256
+	DefaultCacheSize = 512
 
 	SeparatorComma   = ", "
 	SeparatorNextRow = "\n"

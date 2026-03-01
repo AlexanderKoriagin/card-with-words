@@ -90,7 +90,6 @@ func (w *words) Card8Words(language base.Language, difficulty base.Difficulty) (
 			},
 		},
 		ResponseFormat: jgroq.ResponseFormat{Type: "json_object"},
-		Temperature:    0.8,
 	}
 
 	groqResult, err := w.client.CreateChatCompletion(params)

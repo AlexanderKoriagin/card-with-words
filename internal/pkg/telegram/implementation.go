@@ -242,9 +242,13 @@ func (b *Bot) Worker() {
 				case butBackToMainRus, butBackToMainEng:
 					keyboard = keyboardMain
 				case butDictRus:
+					keyboard = keyboardRusDict
+				case butDictWordsRus:
 					output = b.WordsLocal.GetRussian()
 					keyboard = keyboardRusDict
 				case butDictEng:
+					keyboard = keyboardEngDict
+				case butDictWordsEng:
 					output = b.WordsLocal.GetEnglish()
 					keyboard = keyboardEngDict
 				case butGroqRus, butBackToAiDiffRus:
@@ -288,25 +292,25 @@ func (b *Bot) Worker() {
 					output = *groqCard
 					keyboard = keyboardRusAiAdult
 				case butGroqChildWordsEng:
-					groqCard, err := b.WordsGroq.Card8Words(base.Russian, base.Child)
+					groqCard, err := b.WordsGroq.Card8Words(base.English, base.Child)
 					if err != nil {
-						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card ru-child from Groq: %v\n", err)
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card en-child from Groq: %v\n", err)
 					}
 
 					output = *groqCard
 					keyboard = keyboardEngAiChild
 				case butGroqTeenWordsEng:
-					groqCard, err := b.WordsGroq.Card8Words(base.Russian, base.Teen)
+					groqCard, err := b.WordsGroq.Card8Words(base.English, base.Teen)
 					if err != nil {
-						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card ru-teen from Groq: %v\n", err)
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card en-teen from Groq: %v\n", err)
 					}
 
 					output = *groqCard
 					keyboard = keyboardEngAiTeen
 				case butGroqAdultWordsEng:
-					groqCard, err := b.WordsGroq.Card8Words(base.Russian, base.Adult)
+					groqCard, err := b.WordsGroq.Card8Words(base.English, base.Adult)
 					if err != nil {
-						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card ru-adult from Groq: %v\n", err)
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card en-adult from Groq: %v\n", err)
 					}
 
 					output = *groqCard

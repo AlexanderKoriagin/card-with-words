@@ -1,5 +1,7 @@
 package storage
 
+import "cardWithWords/internal/pkg/base"
+
 type Words struct {
 	Features Features
 }
@@ -9,9 +11,9 @@ func Init() *Words {
 }
 
 func (w *Words) GetRussian() string {
-	return w.Features.Card(Russian, 8)
+	return w.Features.Card(base.Russian, base.DefaultQty)
 }
 
 func (w *Words) GetEnglish() string {
-	return w.Features.Card(English, 8)
+	return w.Features.Card(base.English, base.DefaultQty)
 }

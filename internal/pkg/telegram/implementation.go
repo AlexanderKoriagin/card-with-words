@@ -1,15 +1,22 @@
 package telegram
 
 import (
-	"cardWithWords/internal/services"
 	"fmt"
-	tba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"sync"
+
+	"cardWithWords/internal/pkg/base"
+	"cardWithWords/internal/pkg/groq"
+	"cardWithWords/internal/services"
+
+	tba "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 const (
-	buttonRus = "получить карту"
-	buttonEng = "get a card"
+	buttonRus         = "получить карту"
+	buttonEng         = "get a card"
+	buttonGroqChildRu = "GroqChildRu"
+	buttonGroqTeenRu  = "GroqTeenRu"
+	buttonGroqAdultRu = "GroqAdultRu"
 
 	msgDefault = "нажми на кнопку / press the button"
 )
@@ -20,10 +27,11 @@ type Channels struct {
 }
 
 type Bot struct {
-	Api      *tba.BotAPI
-	Words    services.Data
-	Wg       *sync.WaitGroup
-	Channels Channels
+	Api        *tba.BotAPI
+	WordsLocal services.Data
+	WordsGroq  groq.Words
+	Wg         *sync.WaitGroup
+	Channels   Channels
 }
 
 type Features interface {
@@ -59,6 +67,9 @@ func (b *Bot) Worker() {
 		tba.NewKeyboardButtonRow(
 			tba.NewKeyboardButton(buttonRus),
 			tba.NewKeyboardButton(buttonEng),
+			tba.NewKeyboardButton(buttonGroqChildRu),
+			tba.NewKeyboardButton(buttonGroqTeenRu),
+			tba.NewKeyboardButton(buttonGroqAdultRu),
 		),
 	)
 
@@ -75,9 +86,30 @@ func (b *Bot) Worker() {
 			} else {
 				switch u.Message.Text {
 				case buttonRus:
-					card = b.Words.GetRussian()
+					card = b.WordsLocal.GetRussian()
 				case buttonEng:
-					card = b.Words.GetEnglish()
+					card = b.WordsLocal.GetEnglish()
+				case buttonGroqChildRu:
+					groqCard, err := b.WordsGroq.Card8Words(base.Russian, base.Child)
+					if err != nil {
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card from Groq: %v\n", err)
+						card = msgDefault
+					}
+					card = *groqCard
+				case buttonGroqTeenRu:
+					groqCard, err := b.WordsGroq.Card8Words(base.Russian, base.Teen)
+					if err != nil {
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card from Groq: %v\n", err)
+						card = msgDefault
+					}
+					card = *groqCard
+				case buttonGroqAdultRu:
+					groqCard, err := b.WordsGroq.Card8Words(base.Russian, base.Adult)
+					if err != nil {
+						b.Channels.Errors <- fmt.Errorf("[Worker] couldn't get card from Groq: %v\n", err)
+						card = msgDefault
+					}
+					card = *groqCard
 				default:
 					card = msgDefault
 				}

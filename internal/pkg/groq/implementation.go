@@ -23,7 +23,7 @@ const (
 
 	childPrompt = `Language: %s. 
                    Difficulty: %s.
-                   Requirements: Very simple everyday objects and animals that a 6-year-old can easily explain.
+                   Requirements: Very simple everyday objects and animals that a 8-year-old can easily explain.
                    Minimum word length: 3 letters.
                    Make the list diverse and unpredictable.
                    Do not use these words: %s.

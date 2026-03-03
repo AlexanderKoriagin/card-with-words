@@ -88,13 +88,16 @@ func (w *words) Card8Words(language base.Language, difficulty base.Difficulty) (
 		card       string
 	)
 
+	wordsCache := w.cache.get(language, difficulty)
+	fmt.Printf("Cache for language %s and difficulty %s: %v\n", string(language), string(difficulty), wordsCache)
+
 	switch difficulty {
 	case base.Child:
-		userPrompt = fmt.Sprintf(childPrompt, string(language), string(difficulty), w.cache.get(language, difficulty), base.DefaultQty)
+		userPrompt = fmt.Sprintf(childPrompt, string(language), string(difficulty), wordsCache, base.DefaultQty)
 	case base.Teen:
-		userPrompt = fmt.Sprintf(teenPrompt, string(language), string(difficulty), w.cache.get(language, difficulty), base.DefaultQty)
+		userPrompt = fmt.Sprintf(teenPrompt, string(language), string(difficulty), wordsCache, base.DefaultQty)
 	case base.Adult:
-		userPrompt = fmt.Sprintf(adultPrompt, string(language), string(difficulty), w.cache.get(language, difficulty), base.DefaultQty)
+		userPrompt = fmt.Sprintf(adultPrompt, string(language), string(difficulty), wordsCache, base.DefaultQty)
 	}
 
 	params := jgroq.CompletionCreateParams{

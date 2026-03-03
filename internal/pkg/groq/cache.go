@@ -1,6 +1,8 @@
 package groq
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"strings"
 
 	"cardWithWords/internal/pkg/base"
@@ -9,41 +11,41 @@ import (
 )
 
 type cache struct {
-	childRu *lru.Cache[int, string]
-	childEn *lru.Cache[int, string]
-	teenRu  *lru.Cache[int, string]
-	teenEn  *lru.Cache[int, string]
-	adultRu *lru.Cache[int, string]
-	adultEn *lru.Cache[int, string]
+	childRu *lru.Cache[string, string]
+	childEn *lru.Cache[string, string]
+	teenRu  *lru.Cache[string, string]
+	teenEn  *lru.Cache[string, string]
+	adultRu *lru.Cache[string, string]
+	adultEn *lru.Cache[string, string]
 }
 
 func newCache(size int) (*cache, error) {
-	childRu, err := lru.New[int, string](size)
+	childRu, err := lru.New[string, string](size)
 	if err != nil {
 		return nil, err
 	}
 
-	childEn, err := lru.New[int, string](size)
+	childEn, err := lru.New[string, string](size)
 	if err != nil {
 		return nil, err
 	}
 
-	teenRu, err := lru.New[int, string](size)
+	teenRu, err := lru.New[string, string](size)
 	if err != nil {
 		return nil, err
 	}
 
-	teenEn, err := lru.New[int, string](size)
+	teenEn, err := lru.New[string, string](size)
 	if err != nil {
 		return nil, err
 	}
 
-	adultRu, err := lru.New[int, string](size)
+	adultRu, err := lru.New[string, string](size)
 	if err != nil {
 		return nil, err
 	}
 
-	adultEn, err := lru.New[int, string](size)
+	adultEn, err := lru.New[string, string](size)
 	if err != nil {
 		return nil, err
 	}
@@ -89,28 +91,29 @@ func (c *cache) get(language base.Language, difficulty base.Difficulty) string {
 }
 
 func (c *cache) add(language base.Language, difficulty base.Difficulty, words []string) {
-	for i, word := range words {
+	for _, word := range words {
+		hash := fmt.Sprintf("%s", sha256.Sum256([]byte(word)))
 		switch difficulty {
 		case base.Child:
 			switch language {
 			case base.English:
-				c.childEn.Add(i, word)
+				c.childEn.Add(hash, word)
 			default:
-				c.childRu.Add(i, word)
+				c.childRu.Add(hash, word)
 			}
 		case base.Teen:
 			switch language {
 			case base.English:
-				c.teenEn.Add(i, word)
+				c.teenEn.Add(hash, word)
 			default:
-				c.teenRu.Add(i, word)
+				c.teenRu.Add(hash, word)
 			}
 		case base.Adult:
 			switch language {
 			case base.English:
-				c.adultEn.Add(i, word)
+				c.adultEn.Add(hash, word)
 			default:
-				c.adultRu.Add(i, word)
+				c.adultRu.Add(hash, word)
 			}
 		}
 	}

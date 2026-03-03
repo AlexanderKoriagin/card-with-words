@@ -92,7 +92,6 @@ func (c *cache) get(language base.Language, difficulty base.Difficulty) string {
 
 func (c *cache) add(language base.Language, difficulty base.Difficulty, words []string) {
 	for _, word := range words {
-		fmt.Printf("Adding word %s to cache language %s difficulty %s\n", word, string(language), string(difficulty))
 		hash := fmt.Sprintf("%s", sha256.Sum256([]byte(word)))
 		switch difficulty {
 		case base.Child:

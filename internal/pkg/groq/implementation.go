@@ -113,8 +113,6 @@ func (w *words) Card8Words(language base.Language, difficulty base.Difficulty) (
 	)
 
 	wordsCache := w.cache.get(language, difficulty)
-	fmt.Printf("Cache for language %s and difficulty %s: %v\n", string(language), string(difficulty), wordsCache)
-
 	switch difficulty {
 	case base.Child:
 		userPrompt = fmt.Sprintf(childPrompt, string(language), string(difficulty), wordsCache, base.DefaultQty)

@@ -35,7 +35,7 @@ const (
                    1. CRITICAL: Ensure NONE of the generated words match any words in the STOP-LIST above.
                    2. Check for semantic and root-word duplicates in the STOP-LIST.
                    3. Make the list diverse and unpredictable.
-                   4. Generate %d words in JSON.`
+                   4. Generate exactly %d words in JSON format.`
 
 	teenPrompt = `Language: %s. 
                   Difficulty: %s.
@@ -49,21 +49,38 @@ const (
                   1. CRITICAL: Ensure NONE of the generated words match any words in the STOP-LIST above.
                   2. Check for semantic and root-word duplicates in the STOP-LIST.
                   3. Make the list diverse and unpredictable.
-                  4. Generate %d words in JSON.`
+                  4. Generate exactly %d words in JSON format.`
 
 	adultPrompt = `Language: %s.
-				   Difficulty: %s.
-				   Requirements: A diverse mix of intermediate and advanced nouns. Include broad abstract concepts, professional fields, modern social phenomena, and cultural idioms. Focus on words that are well-known but require a creative explanation. Avoid basic everyday objects and highly technical jargon.
-                   Minimum word length: 5 letters.
+                   Difficulty: %s.
+                   Requirements: A balanced mix of nouns for a mature audience. 
+
+                   ### WORD SELECTION RULES:
+                   1. BALANCE: Generate %d words total.
+                   2. "HARD" LEVEL (Exactly 1 word): Intellectually stimulating or rare concepts (e.g., philosophical terms, specific professional roles, or complex social phenomena like "existentialism" or "stagnation").
+                   3. "EASY-ADULT" LEVEL (Exactly 2 words): Common nouns that are simple to explain but belong to the adult world (e.g., "vacation", "insurance", "freelance", "colleague", "gym"). No 3rd-grade objects like "table" or "cat".
+                   4. "MEDIUM-ADULT" LEVEL (All remaining words): Sophisticated but common nouns. Distribute them across these categories:
+                       - 1. Work & Career (deadline, promotion, burnout, expertise).
+                       - 2. Relationships & Psychology (empathy, commitment, boundary, nostalgia).
+                       - 3. Finance & Economy (mortgage, investment, inflation, budget).
+                       - 4. Lifestyle & Urban Life (infrastructure, sustainability, trendsetter).
+                       - 5. Health & Wellbeing (prevention, metabolism, mindfulness, resilience).
+                       - 6. Society & Politics (legislation, advocacy, consensus, bureaucracy).
+                       - 7. Media & Technology (algorithm, privacy, authenticity, integration).
+                       - 8. Travel & Culture (heritage, hospitality, destination, itinerary).
+                       - 9. Personal Growth & Education (mentorship, discipline, perspective).
+                       - 10. Legal & Formalities (agreement, liability, entitlement, procedure).
+                   5. EXCLUSIONS: Avoid basic objects (chair, bread) AND overly obscure jargon that only a specialist would know.
+                   6. Minimum word length: 5 letters.
 
                    ### FORBIDDEN WORDS (STOP-LIST):
                    [%s] 
-                   
+
                    ### TASK: 
-                   1. CRITICAL: Ensure NONE of the generated words match any words in the STOP-LIST above.
+                   1. CRITICAL: Ensure NONE of the generated words match any words in the STOP-LIST.
                    2. Check for semantic and root-word duplicates in the STOP-LIST.
-                   3. Make the list diverse and unpredictable.
-                   4. Generate %d words in JSON.`
+                   3. Maintain the 1-Hard / 2-Easy / Rest-Medium ratio strictly.
+                   4. Generate exactly %d words in JSON format.`
 )
 
 type words struct {
@@ -97,7 +114,7 @@ func (w *words) Card8Words(language base.Language, difficulty base.Difficulty) (
 	case base.Teen:
 		userPrompt = fmt.Sprintf(teenPrompt, string(language), string(difficulty), wordsCache, base.DefaultQty)
 	case base.Adult:
-		userPrompt = fmt.Sprintf(adultPrompt, string(language), string(difficulty), wordsCache, base.DefaultQty)
+		userPrompt = fmt.Sprintf(adultPrompt, string(language), string(difficulty), base.DefaultQty, wordsCache, base.DefaultQty)
 	}
 
 	params := jgroq.CompletionCreateParams{

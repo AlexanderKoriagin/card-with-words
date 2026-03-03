@@ -70,7 +70,13 @@ const (
                        - 8. Travel & Culture (heritage, hospitality, destination, itinerary).
                        - 9. Personal Growth & Education (mentorship, discipline, perspective).
                        - 10. Legal & Formalities (agreement, liability, entitlement, procedure).
-                   5. EXCLUSIONS: Avoid basic objects (chair, bread) AND overly obscure jargon that only a specialist would know.
+
+                   ### FORMAT & STRUCTURE RULES (STRICT):
+                   1. SINGLE WORDS ONLY: Each entry must be exactly ONE word. 
+                   2. NO PHRASES: Absolutely no word combinations (e.g., NO "social security", NO "means of prevention").
+                   3. NO HYPHENS: Do not use words with dashes or hyphens (e.g., NO "socio-economic").
+                   4. NO PLURALS: Use singular form where appropriate.
+                   5. EXCLUSIONS: Avoid basic objects (chair, bread) and overly obscure jargon.
                    6. Minimum word length: 5 letters.
 
                    ### FORBIDDEN WORDS (STOP-LIST):
@@ -80,7 +86,8 @@ const (
                    1. CRITICAL: Ensure NONE of the generated words match any words in the STOP-LIST.
                    2. Check for semantic and root-word duplicates in the STOP-LIST.
                    3. Maintain the 1-Hard / 2-Easy / Rest-Medium ratio strictly.
-                   4. Generate exactly %d words in JSON format.`
+                   4. Ensure all outputs are strictly single-word nouns.
+                   5. Generate exactly %d words in JSON format.`
 )
 
 type words struct {

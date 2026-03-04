@@ -1,11 +1,16 @@
 package base
 
 const (
-	DefaultQty       = 8
-	DefaultCacheSize = 256
+	DefaultQty          = 8
+	DefaultCacheSize    = 256
+	DefaultGroqAttempts = 3
+	DefaultGroqReqPause = 100 // in milliseconds
 
 	SeparatorComma   = ", "
 	SeparatorNextRow = "\n"
+
+	MsgGroqProblemsEng = "Sorry, I couldn't get the card from Groq. Please, try again later."
+	MsgGroqProblemsRus = "Извините, не удалось получить карту от Groq. Пожалуйста, попробуйте позже."
 )
 
 type Language string

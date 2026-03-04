@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"cardWithWords/internal/pkg/base"
 	"cardWithWords/internal/pkg/groq/dto"
@@ -137,19 +138,38 @@ func (w *words) Card8Words(language base.Language, difficulty base.Difficulty) (
 		ResponseFormat: jgroq.ResponseFormat{Type: "json_object"},
 	}
 
-	groqResult, err := w.client.CreateChatCompletion(params)
-	if err != nil {
-		return nil, fmt.Errorf("could not create completion from groq: %w", err)
-	}
-
-	if groqResult == nil || len(groqResult.Choices) == 0 {
-		return nil, fmt.Errorf("groq returned no choices")
-	}
-
 	var parsedResult dto.Card8WordsResult
-	err = json.Unmarshal([]byte(groqResult.Choices[0].Message.Content), &parsedResult)
-	if err != nil {
-		return nil, fmt.Errorf("could not unmarshal choices - %s - from groq: %w", groqResult.Choices[0].Message.Content, err)
+	for i := 0; i < base.DefaultGroqAttempts; i++ {
+		groqResult, err := w.client.CreateChatCompletion(params)
+		if err != nil {
+			return nil, fmt.Errorf("could not create completion from groq: %w", err)
+		}
+
+		if groqResult == nil || len(groqResult.Choices) == 0 {
+			return nil, fmt.Errorf("groq returned no choices")
+		}
+
+		err = json.Unmarshal([]byte(groqResult.Choices[0].Message.Content), &parsedResult)
+		if err != nil {
+			return nil, fmt.Errorf("could not unmarshal choices - %s - from groq: %w", groqResult.Choices[0].Message.Content, err)
+		}
+
+		if len(parsedResult.Result) == base.DefaultQty {
+			break
+		}
+
+		// if groq didn't return exactly 8 words, try again with the same prompt
+		parsedResult = dto.Card8WordsResult{}
+		time.Sleep(base.DefaultGroqReqPause * time.Millisecond)
+	}
+
+	if len(parsedResult.Result) != base.DefaultQty {
+		card = base.MsgGroqProblemsRus
+		if language == base.English {
+			card = base.MsgGroqProblemsEng
+		}
+
+		return &card, nil
 	}
 
 	w.cache.add(language, difficulty, parsedResult.Result)

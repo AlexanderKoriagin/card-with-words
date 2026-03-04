@@ -44,9 +44,7 @@ const (
 	butBackToAiDiffRus = "⬅️ К выбору сложности"
 	butBackToAiDiffEng = "⬅️ Back to difficulty"
 
-	msgDefault         = "нажми на кнопку / press the button"
-	msgGroqProblemsEng = "Sorry, I couldn't get the card from Groq. Please, try again later."
-	msgGroqProblemsRus = "Извините, не удалось получить карту от Groq. Пожалуйста, попробуйте позже."
+	msgDefault = "нажми на кнопку / press the button"
 )
 
 type Channels struct {
@@ -313,9 +311,9 @@ func (b *Bot) getGroqWords(language base.Language, difficulty base.Difficulty) s
 		b.Channels.Errors <- fmt.Errorf("[Worker] got empty card %s-%s from Groq\n", string(language), string(difficulty))
 
 		if language == base.English {
-			return msgGroqProblemsEng
+			return base.MsgGroqProblemsEng
 		}
-		return msgGroqProblemsRus
+		return base.MsgGroqProblemsRus
 	}
 
 	return *groqCard
